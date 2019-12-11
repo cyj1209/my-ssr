@@ -1,14 +1,21 @@
+import React from "react";
 import { renderToString } from "react-dom/server";
 import express from "express";
+import { StaticRouter } from "react-router-dom";
+import { Provider } from "react-redux";
 import App from "../src/App";
+import store from "../src/store/store";
 
 const app = express();
 app.use(express.static("public"));
 
-app.get("/", (req, res) => {
+app.get("*", (req, res) => {
   // 把react组件，解析成html
-  const content = renderToString(App);
-  // 为什么这里content可以直接放，不用innerHTML ？ 查看react文档的api
+  const content = renderToString(
+    <Provider store={store}>
+      <StaticRouter location={req.url}>{App}</StaticRouter>
+    </Provider>
+  );
   // 因为使用的模板支付串
   res.send(`
     <html>

@@ -1,13 +1,11 @@
-import React, { useState } from "react";
-function App(props) {
-  const [count, setCount] = useState(1);
-  return (
-    <div>
-      <h1>my-ssr {props.title} </h1>
-      <p>now count is {count}</p>
-      <button onClick={e => setCount(count + 1)}>add</button>
-    </div>
-  );
-}
+import React from "react";
+import { Route } from "react-router-dom";
+import Index from "./container/index";
+import About from "./container/about";
 
-export default <App title="hello world" />;
+export default (
+  <div>
+    <Route path="/" exact={true} component={Index}></Route>
+    <Route path="/about" exact={true} component={About}></Route>
+  </div>
+);
