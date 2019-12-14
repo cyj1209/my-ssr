@@ -25,7 +25,7 @@
   "scripts": {
     "start": " concurrently \"yarn dev:client\" \"yarn dev:server\" \"yarn dev:start\"",
     "dev:client": "webpack --config webpack.client.js --watch",
-    "dev:server": "webpack --config webpack.server.js --watch",
+    "dev:server": "webpack --config webpack.server.js ",
     "dev:start": "nodemon --watch build --exec node \"./build/bundle.js\""
   },
   "keywords": [],

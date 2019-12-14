@@ -2,10 +2,25 @@
 let express = require("express");
 const app = express();
 
+app.get("/api/user/info1", (req, res) => {
+  console.log("here is get user info");
+  // res.header("Access-Control-Allow-Origin", "*");
+  // res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
+  // res.header("Content-Type", "application/json;charset=utf-8");
+  res.json({
+    code: 0,
+    data: {
+      name: "开课吧",
+      best: "Wall"
+    }
+  });
+});
+
 app.get("/api/course/list", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
-  res.header("Content-Type", "application/json;charset=utf-8");
+  console.log("here is get list info ");
+  // res.header("Access-Control-Allow-Origin", "*");
+  // res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
+  // res.header("Content-Type", "application/json;charset=utf-8");
   res.json({
     code: 0,
     list: [
