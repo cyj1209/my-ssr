@@ -1,7 +1,8 @@
 import Index from "./container/index";
 import About from "./container/about";
 import User from "./container/user";
-
+import Notfound from "./container/notfound";
+import "./app.css";
 // export default (
 //   <div>
 //     <Route path="/" exact={true} component={Index}></Route>
@@ -14,7 +15,7 @@ export default [
   {
     path: "/",
     component: Index,
-    // exact: true,
+    exact: true,
     key: "index"
   },
   {
@@ -26,7 +27,11 @@ export default [
   {
     path: "/user",
     component: User,
-    exact: true,
+    // exact: true,
     key: "user"
+  },
+  {
+
+    component: Notfound
   }
 ];

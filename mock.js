@@ -2,7 +2,7 @@
 let express = require("express");
 const app = express();
 
-app.get("/api/user/info1", (req, res) => {
+app.get("/api/user/info", (req, res) => {
   console.log("here is get user info");
   // res.header("Access-Control-Allow-Origin", "*");
   // res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");

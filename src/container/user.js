@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 import { getUserInfo } from "../store/user";
+
 function User(props) {
   console.log(props);
   useEffect(() => {
@@ -10,15 +12,16 @@ function User(props) {
     }
   }, []);
   return (
-    <div
-      style={{
-        display: props.userInfo && props.userInfo.isError ? "none" : "block"
-      }}
-    >
-      <h1>
-        hello {props.userInfo.name},i'm {props.userInfo.best}
-      </h1>
-    </div>
+    <Redirect to="/about"></Redirect>
+    //     <div
+    //       style={{
+    //         display: props.userInfo && props.userInfo.isError ? "none" : "block"
+    //       }}
+    //     >
+    //       <h1>
+    //         hello {props.userInfo.name},i'm {props.userInfo.best}
+    //       </h1>
+    //     </div>
   );
 }
 

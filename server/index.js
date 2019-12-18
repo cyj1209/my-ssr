@@ -1,12 +1,11 @@
 import React from "react";
 import { renderToString } from "react-dom/server";
 import express from "express";
-import { StaticRouter, matchPath, Route } from "react-router-dom";
+import { StaticRouter, matchPath, Route, Switch } from "react-router-dom";
 import { Provider } from "react-redux";
 import routes from "../src/App";
 import { getServerStore } from "../src/store/store";
 import Header from "../src/components/Header";
-import http from "http";
 import Axios from "axios";
 const store = getServerStore();
 const app = express();
@@ -33,8 +32,8 @@ app.get("*", (req, res) => {
       url: "http://localhost:9090" + path
     }).then(
       result => {
-        console.log("1111111111111111");
-        console.log(result);
+        // console.log("1111111111111111");
+        // console.log(result);
         res.json(result.data);
       },
       err => {
@@ -72,19 +71,29 @@ app.get("*", (req, res) => {
     }
   });
   Promise.all(promises).then(resArray => {
-    if (resArray.some(flag => flag === "SUCCESS")) {
+    const context = {};
+    if (resArray.some(flag => flag === "SUCCESS") || resArray.length === 0) {
       const content = renderToString(
         <Provider store={store}>
-          <StaticRouter location={req.url}>
+          <StaticRouter location={req.url} context={context}>
             <Header></Header>
-            {routes.map(route => {
-              if (!errorKey[route.key]) {
-                return <Route {...route}></Route>;
-              }
-            })}
+            <Switch>
+              {routes.map(route => {
+                if (!errorKey[route.key]) {
+                  return <Route {...route} key={route.key}></Route>;
+                }
+              })}
+            </Switch>
           </StaticRouter>
         </Provider>
       );
+      console.log("context", context);
+      if (context.statusCode) {
+        res.status(context.statusCode);
+      }
+      if (context.action === "REPLACE") {
+        res.redirect(301, context.url);
+      }
       res.send(`
       <html>
         <head>
