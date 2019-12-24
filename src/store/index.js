@@ -8,10 +8,16 @@ const changeList = list => ({
 
 export const getIndexList = server => {
   return (dispatch, getState, axiosInstance) => {
-    return axios.get("http://localhost:9003/api/course/list").then(res => {
-      const { list } = res.data;
-      dispatch(changeList(list));
-    });
+    return axios
+      .get("http://localhost:9003/api/course/list", {
+        validateStatus: function(status) {
+          return status < 400;
+        }
+      })
+      .then(res => {
+        const { list } = res.data;
+        dispatch(changeList(list));
+      });
   };
 };
 

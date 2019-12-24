@@ -12,7 +12,7 @@ const Page = (
       <Header></Header>
       <Switch>
         {routes.map(route => {
-          if (!__errorKey[route.key]) {
+          if (!window.__errorKey || !window.__errorKey[route.key]) {
             return <Route {...route} key={route.key}></Route>;
           }
         })}
@@ -20,4 +20,9 @@ const Page = (
     </BrowserRouter>
   </Provider>
 );
-ReactDom.hydrate(Page, document.getElementById("root"));
+
+if (window.__context) {
+  ReactDom.hydrate(Page, document.getElementById("root"));
+} else {
+  ReactDom.render(Page, document.getElementById("root"));
+}

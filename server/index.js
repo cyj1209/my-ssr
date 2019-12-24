@@ -1,39 +1,50 @@
 import React from "react";
-import { renderToString } from "react-dom/server";
+import Axios from "axios";
+import path from "path";
+import fs from "fs";
 import express from "express";
-import { StaticRouter, matchPath, Route, Switch } from "react-router-dom";
 import { Provider } from "react-redux";
+import { renderToString } from "react-dom/server";
+import { StaticRouter, matchPath, Route, Switch } from "react-router-dom";
 import routes from "../src/App";
 import { getServerStore } from "../src/store/store";
 import Header from "../src/components/Header";
-import Axios from "axios";
+
 const store = getServerStore();
 const app = express();
 app.use(express.static("public"));
 
+function csrRender(res) {
+  const filename = path.resolve(process.cwd(), "public/index.csr.html");
+  const html = fs.readFileSync(filename, "utf-8");
+  return res.send(html);
+}
+
 app.get("*", (req, res) => {
   // 根据路由拿到需要获取的组件，并且拿到loadData的方法并且获取到数据
-
-  console.log(req.url);
+  if (req.query._mode === "csr") {
+    return csrRender(res);
+  }
   if (req.url.startsWith("/api")) {
-    console.log("here is starts with api");
-
-    const { method, path, headers, params, body } = req;
-    // console.log("method :", method);
-    // console.log("path :", path);
-    // console.log("headers :", headers);
-    // console.log("params :", params);
-    // console.log("body :", body);
+    let { method, path, headers, params, body } = req;
+    if (method.toLowerCase() === "get") {
+      if (path.indexOf("?") === -1) {
+        path += `?date=${Date.now()}`;
+      } else {
+        path += `&date=${Date.now()}`;
+      }
+    }
     Axios({
       method,
       headers,
       params,
       data: body,
-      url: "http://localhost:9090" + path
+      url: "http://localhost:9090" + path,
+      validateStatus: function(status) {
+        return status < 400;
+      }
     }).then(
       result => {
-        // console.log("1111111111111111");
-        // console.log(result);
         res.json(result.data);
       },
       err => {
@@ -71,7 +82,9 @@ app.get("*", (req, res) => {
     }
   });
   Promise.all(promises).then(resArray => {
-    const context = {};
+    const context = {
+      css: []
+    };
     if (resArray.some(flag => flag === "SUCCESS") || resArray.length === 0) {
       const content = renderToString(
         <Provider store={store}>
@@ -94,11 +107,17 @@ app.get("*", (req, res) => {
       if (context.action === "REPLACE") {
         res.redirect(301, context.url);
       }
+
+      const css = context.css.join("\n");
+
       res.send(`
       <html>
         <head>
           <meta charset='utf-8' />
           <title>my ssr</title>
+          <style>
+            ${css}
+          </style>
         </head>
         <body>
           <div id="root">${content}</div>
